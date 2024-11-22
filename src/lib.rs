@@ -15,6 +15,9 @@ use web_sys::console;
 mod descriptor;
 mod error;
 mod keys;
+mod esplora;
+mod bitcoin;
+mod types;
 
 // Re-export the Descriptor struct and its implementation
 pub use descriptor::Descriptor;
