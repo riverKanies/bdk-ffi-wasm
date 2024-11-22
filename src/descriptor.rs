@@ -18,12 +18,15 @@ use std::fmt::Display;
 use std::str::FromStr;
 
 #[derive(Debug)]
+#[wasm_bindgen]
 pub struct Descriptor {
     pub extended_descriptor: ExtendedDescriptor,
     pub key_map: KeyMap,
 }
 
+#[wasm_bindgen]
 impl Descriptor {
+    #[wasm_bindgen(constructor)]
     pub(crate) fn new(descriptor: String, network: Network) -> Result<Self, DescriptorError> {
         let secp = Secp256k1::new();
         let (extended_descriptor, key_map) = descriptor.into_wallet_descriptor(&secp, network)?;
@@ -261,6 +264,7 @@ impl Descriptor {
         }
     }
 
+    #[wasm_bindgen]
     pub(crate) fn to_string_with_secret(&self) -> String {
         let descriptor = &self.extended_descriptor;
         let key_map = &self.key_map;

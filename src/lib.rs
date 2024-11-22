@@ -1,8 +1,4 @@
-// mod descriptor;
-// mod wallet;
 
-// use crate::descriptor::Descriptor;
-// use crate::wallet::Wallet;
 
 mod utils;
 
@@ -26,6 +22,46 @@ extern "C" {}
 pub fn greet() -> String {
     "Hello, bdk-wasm!".into()
 }
+
+// mod bitcoin;
+mod descriptor;
+// mod electrum;
+// mod error;
+// mod esplora;
+// mod keys;
+// mod store;
+// mod tx_builder;
+// mod types;
+// mod wallet;
+// mod utils;
+
+// use crate::bitcoin::{Address, Psbt, Transaction, TxIn, TxOut};
+use crate::descriptor::Descriptor;
+// use crate::electrum::ElectrumClient;
+// use crate::error::*;  // Import all error types
+// use crate::esplora::EsploraClient;
+// use crate::keys::{DerivationPath, DescriptorPublicKey, DescriptorSecretKey, Mnemonic};
+// use crate::store::Connection;
+// use crate::tx_builder::{BumpFeeTxBuilder, TxBuilder};
+// use crate::types::*;  // Import all types
+// use crate::wallet::Wallet;
+
+// use bitcoin_ffi::{Amount, FeeRate, Network, OutPoint, Script};
+// use bdk_wallet::{
+//     keys::bip39::WordCount,
+//     tx_builder::ChangeSpendPolicy,
+//     ChangeSet,
+//     KeychainKind,
+// };
+
+pub mod prelude {
+    pub use super::*;
+}
+
+
+
+
+
 
 // #[wasm_bindgen]
 // pub struct WalletWrapper {

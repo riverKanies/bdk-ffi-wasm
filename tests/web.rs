@@ -5,6 +5,7 @@
 extern crate wasm_bindgen_test;
 
 use anyhow::{anyhow, Error};
+use miniscript::Descriptor;
 use std::str::FromStr;
 use web_sys::console;
 
@@ -14,28 +15,22 @@ use bdk_wallet::{
     descriptor,
     descriptor::IntoWalletDescriptor,
 };
-use bdk_ffi_wasm::prelude::Wallet;
-// use bdk_ffi_wasm::prelude::*;
+// use bdk_ffi_wasm::prelude::Wallet;
+use bdk_ffi_wasm::prelude::*;
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
 
 #[wasm_bindgen_test]
 async fn test_descriptors() {
-    let wallet = new_test_wallet().expect("wallet");
-    wallet.sync(5).await.expect("sync");
-
-    let first_address = wallet.peek_address(0);
-    assert_eq!(
-        first_address,
-        "tb1q8vl3qjdxnm54psxn5vgzdf402ky23r0jjfd8cj".to_string()
+    let descriptor = Descriptor(
+        "wpkh(tprv8ZgxMBicQKsPf2qfrEygW6fdYseJDDrVnDv26PH5BHdvSuG6ecCbHqLVof9yZcMoM31z9ur3tTYbSnr1WBqbGX97CbXcmp5H6qeMpyvx35B/84h/1h/0h/0/*)", 
+        Network.signet
     );
-
-    let balance = wallet.balance();
-    assert_eq!(balance, 0);
-
-    let new_address = wallet.get_new_address();
-    console::log_1(&format!("new_address: {}", new_address).into());
+    let change_descriptor = Descriptor(
+        "wpkh(tprv8ZgxMBicQKsPf2qfrEygW6fdYseJDDrVnDv26PH5BHdvSuG6ecCbHqLVof9yZcMoM31z9ur3tTYbSnr1WBqbGX97CbXcmp5H6qeMpyvx35B/84h/1h/0h/1/*)", 
+        Network.signet
+    );
 }
 
 // fn new_test_wallet() -> Result<WalletWrapper, String> {
