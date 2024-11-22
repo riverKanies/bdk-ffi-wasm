@@ -14,7 +14,7 @@ use bdk_wallet::{
     descriptor,
     descriptor::IntoWalletDescriptor,
 };
-use bdk_wasm::{Descriptor, WalletWrapper};
+use bdk_ffi_wasm::{Descriptor, WalletWrapper};
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
