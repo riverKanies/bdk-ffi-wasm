@@ -11,6 +11,14 @@ use js_sys::Date;
 use wasm_bindgen::prelude::*;
 use web_sys::console;
 
+// Add these modules
+mod descriptor;
+mod error;
+mod keys;
+
+// Re-export the Descriptor struct and its implementation
+pub use descriptor::Descriptor;
+
 const PARALLEL_REQUESTS: usize = 1;
 
 #[wasm_bindgen]

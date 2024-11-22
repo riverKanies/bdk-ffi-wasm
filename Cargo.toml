@@ -27,8 +27,11 @@ getrandom = { version = "0.2.15", features = ["js"] }
 ring = { version = "0.17.8", features = ["wasm32_unknown_unknown_js"] }
 
 # BDK dependencies
-bdk_wallet = { version = "1.0.0-beta.5" }
+bdk_wallet = { version = "=1.0.0-beta.5", features = ["all-keys", "keys-bip39"] }
 bdk_esplora = { version = "0.19.0", features = ["async-https"] }
+
+thiserror = "1.0.58"
+bitcoin-ffi = { git = "https://github.com/bitcoindevkit/bitcoin-ffi", tag = "v0.1.2" }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.45"
