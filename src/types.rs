@@ -1,4 +1,3 @@
-
 use wasm_bindgen::prelude::*;
 
 use serde::{Serialize, Deserialize};
@@ -26,6 +25,8 @@ use bdk_wallet::Balance as BdkBalance;
 use bdk_wallet::KeychainKind;
 use bdk_wallet::LocalOutput as BdkLocalOutput;
 use bdk_wallet::Update as BdkUpdate;
+use bdk_core::TxUpdate;
+use bdk_core::CheckPoint;
 
 use std::sync::{Arc, Mutex};
 
@@ -233,8 +234,26 @@ impl FullScanRequestBuilder {
 }
 
 #[wasm_bindgen]
-#[derive(Serialize)] 
+#[derive(Serialize, Clone)]
+#[serde(into = "UpdateSerializable")]
 pub struct Update(pub(crate) BdkUpdate);
+
+#[derive(Serialize, Clone)]
+struct UpdateSerializable {
+    last_active_indices: Vec<(KeychainKind, u32)>,
+    tx_update: TxUpdate<bdk_core::ConfirmationBlockTime>,
+    chain: std::option::Option<CheckPoint>,
+}
+
+impl From<Update> for UpdateSerializable {
+    fn from(update: Update) -> Self {
+        UpdateSerializable {
+            last_active_indices: update.0.last_active_indices.into_iter().collect(),
+            tx_update: update.0.tx_update,
+            chain: update.0.chain,
+        }
+    }
+}
 
 pub struct SentAndReceivedValues {
     pub sent: Arc<Amount>,
