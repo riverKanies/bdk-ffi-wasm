@@ -40,6 +40,11 @@ fn new_test_wallet() -> Result<WalletWrapper, String> {
 
 #[wasm_bindgen_test]
 async fn test_wallet() {
+
+    let descriptor = Descriptor::new("tr([12071a7c/86'/1'/0']tpubDCaLkqfh67Qr7ZuRrUNrCYQ54sMjHfsJ4yQSGb3aBr1yqt3yXpamRBUwnGSnyNnxQYu7rqeBiPfw3mjBcFNX4ky2vhjj9bDrGstkfUbLB9T/0/*)#z3x5097m".into(), "signet".into()).expect("descriptor");
+    console::log_1(&format!("descriptor parsed: {}", descriptor.to_string_with_secret()).into());
+
+
     let wallet = new_test_wallet().expect("wallet");
     wallet.sync(5).await.expect("sync");
 
