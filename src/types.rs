@@ -165,7 +165,16 @@ pub struct FullScanRequestBuilder(
 
 pub struct SyncRequestBuilder(pub(crate) Mutex<Option<BdkSyncRequestBuilder<(KeychainKind, u32)>>>);
 
-pub struct FullScanRequest(pub(crate) Mutex<Option<BdkFullScanRequest<KeychainKind>>>);
+#[wasm_bindgen]
+pub struct FullScanRequest(pub(crate) Arc<Mutex<Option<BdkFullScanRequest<KeychainKind>>>>);
+
+#[wasm_bindgen]
+impl FullScanRequest {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> Self {
+        Self(Arc::new(Mutex::new(Some(BdkFullScanRequest::default()))))
+    }
+}
 
 pub struct SyncRequest(pub(crate) Mutex<Option<BdkSyncRequest<(KeychainKind, u32)>>>);
 
@@ -229,31 +238,31 @@ impl FullScanRequestBuilder {
             .unwrap()
             .take()
             .ok_or(RequestBuilderError::RequestAlreadyConsumed)?;
-        Ok(Arc::new(FullScanRequest(Mutex::new(Some(guard.build())))))
+        Ok(Arc::new(FullScanRequest(Arc::new(Mutex::new(Some(guard.build()))))))
     }
 }
 
 #[wasm_bindgen]
-#[derive(Serialize, Clone)]
-#[serde(into = "UpdateSerializable")]
+// #[derive(Serialize, Clone)]
+// #[serde(into = "UpdateSerializable")]
 pub struct Update(pub(crate) BdkUpdate);
 
-#[derive(Serialize, Clone)]
-struct UpdateSerializable {
-    last_active_indices: Vec<(KeychainKind, u32)>,
-    tx_update: TxUpdate<bdk_core::ConfirmationBlockTime>,
-    chain: std::option::Option<CheckPoint>,
-}
+// #[derive(Serialize, Clone)]
+// struct UpdateSerializable {
+//     last_active_indices: Vec<(KeychainKind, u32)>,
+//     tx_update: TxUpdate<bdk_core::ConfirmationBlockTime>,
+//     chain: std::option::Option<CheckPoint>,
+// }
 
-impl From<Update> for UpdateSerializable {
-    fn from(update: Update) -> Self {
-        UpdateSerializable {
-            last_active_indices: update.0.last_active_indices.into_iter().collect(),
-            tx_update: update.0.tx_update,
-            chain: update.0.chain,
-        }
-    }
-}
+// impl From<Update> for UpdateSerializable {
+//     fn from(update: Update) -> Self {
+//         UpdateSerializable {
+//             last_active_indices: update.0.last_active_indices.into_iter().collect(),
+//             tx_update: update.0.tx_update,
+//             chain: update.0.chain,
+//         }
+//     }
+// }
 
 pub struct SentAndReceivedValues {
     pub sent: Arc<Amount>,
