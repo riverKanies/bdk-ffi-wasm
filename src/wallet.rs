@@ -13,7 +13,7 @@ use crate::types::{
 use bitcoin_ffi::{Amount, FeeRate, OutPoint, Script};
 
 use bdk_wallet::bitcoin::{Network, Txid};
-use bdk_wallet::rusqlite::Connection as BdkConnection;
+// use rusqlite::Connection as BdkConnection;
 use bdk_wallet::{KeychainKind, PersistedWallet, SignOptions, Wallet as BdkWallet};
 
 use std::borrow::BorrowMut;
@@ -21,7 +21,7 @@ use std::str::FromStr;
 use std::sync::{Arc, Mutex, MutexGuard};
 
 pub struct Wallet {
-    inner_mutex: Mutex<PersistedWallet<BdkConnection>>,
+    inner_mutex: Mutex<BdkWallet>,
 }
 
 impl Wallet {
@@ -34,41 +34,41 @@ impl Wallet {
         let descriptor = descriptor.to_string_with_secret();
         let change_descriptor = change_descriptor.to_string_with_secret();
         let mut binding = connection.get_store();
-        let db: &mut BdkConnection = binding.borrow_mut();
 
-        let wallet: PersistedWallet<BdkConnection> =
+        let wallet: BdkWallet =
             BdkWallet::create(descriptor, change_descriptor)
                 .network(network)
-                .create_wallet(db)?;
+                .create_wallet_no_persist()
+                .expect("create wallet");
 
         Ok(Wallet {
             inner_mutex: Mutex::new(wallet),
         })
     }
 
-    pub fn load(
-        descriptor: Arc<Descriptor>,
-        change_descriptor: Arc<Descriptor>,
-        connection: Arc<Connection>,
-    ) -> Result<Wallet, LoadWithPersistError> {
-        let descriptor = descriptor.to_string_with_secret();
-        let change_descriptor = change_descriptor.to_string_with_secret();
-        let mut binding = connection.get_store();
-        let db: &mut BdkConnection = binding.borrow_mut();
+    // pub fn load(
+    //     descriptor: Arc<Descriptor>,
+    //     change_descriptor: Arc<Descriptor>,
+    //     connection: Arc<Connection>,
+    // ) -> Result<Wallet, LoadWithPersistError> {
+    //     let descriptor = descriptor.to_string_with_secret();
+    //     let change_descriptor = change_descriptor.to_string_with_secret();
+    //     let mut binding = connection.get_store();
+    //     let db: &mut BdkConnection = binding.borrow_mut();
 
-        let wallet: PersistedWallet<BdkConnection> = BdkWallet::load()
-            .descriptor(KeychainKind::External, Some(descriptor))
-            .descriptor(KeychainKind::Internal, Some(change_descriptor))
-            .extract_keys()
-            .load_wallet(db)?
-            .ok_or(LoadWithPersistError::CouldNotLoad)?;
+    //     let wallet: PersistedWallet<BdkConnection> = BdkWallet::load()
+    //         .descriptor(KeychainKind::External, Some(descriptor))
+    //         .descriptor(KeychainKind::Internal, Some(change_descriptor))
+    //         .extract_keys()
+    //         .load_wallet(db)?
+    //         .ok_or(LoadWithPersistError::CouldNotLoad)?;
 
-        Ok(Wallet {
-            inner_mutex: Mutex::new(wallet),
-        })
-    }
+    //     Ok(Wallet {
+    //         inner_mutex: Mutex::new(wallet),
+    //     })
+    // }
 
-    pub(crate) fn get_wallet(&self) -> MutexGuard<PersistedWallet<BdkConnection>> {
+    pub(crate) fn get_wallet(&self) -> MutexGuard<BdkWallet> {
         self.inner_mutex.lock().expect("wallet")
     }
 
@@ -225,13 +225,13 @@ impl Wallet {
     }
 
     // pub fn persist(&self, connection: Connection) -> Result<bool, FfiGenericError> {
-    pub fn persist(&self, connection: Arc<Connection>) -> Result<bool, SqliteError> {
-        let mut binding = connection.get_store();
-        let db: &mut BdkConnection = binding.borrow_mut();
-        self.get_wallet()
-            .persist(db)
-            .map_err(|e| SqliteError::Sqlite {
-                rusqlite_error: e.to_string(),
-            })
-    }
+    // pub fn persist(&self, connection: Arc<Connection>) -> Result<bool, SqliteError> {
+    //     let mut binding = connection.get_store();
+    //     let db: &mut BdkConnection = binding.borrow_mut();
+    //     self.get_wallet()
+    //         .persist(db)
+    //         .map_err(|e| SqliteError::Sqlite {
+    //             rusqlite_error: e.to_string(),
+    //         })
+    // }
 }

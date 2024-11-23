@@ -18,6 +18,8 @@ mod keys;
 mod esplora;
 mod bitcoin;
 mod types;
+mod wallet;
+mod store;
 
 // Re-export the Descriptor struct and its implementation
 pub use descriptor::Descriptor;
