@@ -6,12 +6,13 @@ extern crate wasm_bindgen_test;
 
 use web_sys::console;
 
-use bdk_ffi_wasm::{Descriptor, WalletWrapper};
+use bdk_ffi_wasm::{Descriptor, WalletWrapper, EsploraClientWrapper, UpdateWrapper};
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
 
 fn new_test_wallet() -> Result<WalletWrapper, String> {
+    let esplora_client = EsploraClientWrapper::new("https://mutinynet.com/api".into());
     let esplora_url = "https://mutinynet.com/api";
 
     let descriptor = Descriptor::new("tr([12071a7c/86'/1'/0']tpubDCaLkqfh67Qr7ZuRrUNrCYQ54sMjHfsJ4yQSGb3aBr1yqt3yXpamRBUwnGSnyNnxQYu7rqeBiPfw3mjBcFNX4ky2vhjj9bDrGstkfUbLB9T/0/*)#z3x5097m".into(), "signet".into()).expect("descriptor");

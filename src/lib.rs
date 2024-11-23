@@ -21,6 +21,7 @@ mod types;
 
 // Re-export the Descriptor struct and its implementation
 pub use descriptor::Descriptor;
+pub use esplora::{EsploraClientWrapper, UpdateWrapper};
 
 const PARALLEL_REQUESTS: usize = 1;
 
