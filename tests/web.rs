@@ -40,7 +40,7 @@ async fn test_wallet() {
 
     let esplora_client = EsploraClientWrapper::new("https://mutinynet.com/api".into());
 
-    let update = esplora_client.full_scan(scan_request, 5, 1).expect("full scan");
+    let update = esplora_client.full_scan(scan_request, 5, 1).await.expect("full scan");
 
     let now = (Date::now() / 1000.0) as u64;
     wallet.apply_update_at(update, now).expect("apply update");
