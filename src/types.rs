@@ -1,4 +1,6 @@
 use wasm_bindgen::prelude::*;
+use std::{cell::RefCell, collections::BTreeSet, io::Write, rc::Rc};
+
 
 use serde::{Serialize, Deserialize};
 
@@ -166,6 +168,7 @@ pub struct FullScanRequestBuilder(
 pub struct SyncRequestBuilder(pub(crate) Mutex<Option<BdkSyncRequestBuilder<(KeychainKind, u32)>>>);
 
 #[wasm_bindgen]
+#[derive(Clone)]
 pub struct FullScanRequest(pub(crate) Arc<Mutex<Option<BdkFullScanRequest<KeychainKind>>>>);
 
 #[wasm_bindgen]
@@ -247,6 +250,23 @@ impl FullScanRequestBuilder {
 // #[serde(into = "UpdateSerializable")]
 pub struct Update(pub(crate) BdkUpdate);
 
+#[wasm_bindgen]
+pub struct UpdateWrapper {
+    update: Rc<RefCell<Update>>
+}
+
+#[wasm_bindgen]
+impl UpdateWrapper {
+    #[wasm_bindgen(constructor)]
+    pub fn new(update: Update) -> Self {
+        UpdateWrapper { update: Rc::new(RefCell::new(update)) }
+    }
+
+    pub fn get(&self) -> Update {
+        self.update.borrow().clone()
+    }
+}
+
 // #[derive(Serialize, Clone)]
 // struct UpdateSerializable {
 //     last_active_indices: Vec<(KeychainKind, u32)>,
@@ -272,4 +292,10 @@ pub struct SentAndReceivedValues {
 pub struct KeychainAndIndex {
     pub keychain: KeychainKind,
     pub index: u32,
+}
+
+impl Clone for Update {
+    fn clone(&self) -> Self {
+        Update(self.0.clone())
+    }
 }

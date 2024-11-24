@@ -19,11 +19,12 @@ mod esplora;
 mod bitcoin;
 mod types;
 mod wallet;
-mod store;
 
 // Re-export the Descriptor struct and its implementation
 pub use descriptor::Descriptor;
-pub use esplora::{EsploraClientWrapper, UpdateWrapper};
+pub use esplora::{EsploraClientWrapper};
+pub use types::UpdateWrapper;
+pub use wallet::Wallet as WalletWasm;
 
 const PARALLEL_REQUESTS: usize = 1;
 

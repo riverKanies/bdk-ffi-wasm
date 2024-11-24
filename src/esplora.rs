@@ -6,7 +6,7 @@ use wasm_bindgen::JsValue;
 use crate::bitcoin::Transaction;
 use crate::error::EsploraError;
 use crate::types::Update;
-use crate::types::{FullScanRequest, SyncRequest};
+use crate::types::{FullScanRequest, SyncRequest, UpdateWrapper};
 
 use bdk_esplora::esplora_client::{BlockingClient, Builder};
 use bdk_esplora::EsploraExt;
@@ -28,9 +28,6 @@ pub struct EsploraClient(BlockingClient);
 
 #[wasm_bindgen]
 pub struct EsploraClientWrapper(Rc<RefCell<EsploraClient>>);
-
-#[wasm_bindgen]
-pub struct UpdateWrapper(Rc<RefCell<Update>>);
 
 #[wasm_bindgen]
 impl EsploraClientWrapper {
@@ -69,6 +66,6 @@ impl EsploraClientWrapper {
             chain: result.chain_update,
         };
 
-        Ok(UpdateWrapper(Rc::new(RefCell::new(Update(update)))))
+        Ok(UpdateWrapper::new(Update(update)))
     }
 }
