@@ -9,7 +9,7 @@ use crate::error::{
     SignerError, SqliteError, TxidParseError,
 };
 use crate::types::{
-    AddressInfo, Balance, CanonicalTx, FullScanRequestBuilder, FullScanRequest, KeychainAndIndex, LocalOutput,
+    AddressInfo, Balance, CanonicalTx, FullScanRequest, FullScanRequestWrapper, KeychainAndIndex, LocalOutput,
     SentAndReceivedValues, SyncRequestBuilder, Update, UpdateWrapper,
 };
 
@@ -154,11 +154,11 @@ impl Wallet {
     // }
 
     #[wasm_bindgen]
-    pub fn apply_update_at(&self, update: UpdateWrapper, timestamp: u64) -> Result<(), wasm_bindgen::JsValue> {
+    pub fn apply_update_at(&self, update: UpdateWrapper, timestamp: u64) -> (Result<(), String>) {
         let update = update.get();
-        self.get_wallet()
+        Ok(self.get_wallet()
             .apply_update_at(update.0.clone(), Some(timestamp))
-            .map_err(|e| JsValue::from_str(&format!("{:?}", e)))
+            .map_err(|e| format!("{:?}", e))?)
     }
 
     pub(crate) fn derivation_index(&self, keychain: KeychainKind) -> Option<u32> {
@@ -257,9 +257,9 @@ impl Wallet {
     // }
 
     #[wasm_bindgen]
-    pub fn start_full_scan(&self) -> FullScanRequest {
+    pub fn start_full_scan(&self) -> FullScanRequestWrapper {
         let builder = self.get_wallet().start_full_scan();
-        (*FullScanRequestBuilder(Mutex::new(Some(builder))).build().unwrap()).clone()
+        FullScanRequestWrapper::new(FullScanRequest(Arc::new(Mutex::new(Some(builder.build())))))
     }
 
     // #[wasm_bindgen]

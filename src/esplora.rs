@@ -1,12 +1,11 @@
 use std::{cell::RefCell, collections::BTreeSet, io::Write, rc::Rc};
 
 use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsValue;
 
 use crate::bitcoin::Transaction;
 use crate::error::EsploraError;
 use crate::types::Update;
-use crate::types::{FullScanRequest, SyncRequest, UpdateWrapper};
+use crate::types::{FullScanRequestWrapper, SyncRequest, UpdateWrapper};
 
 use bdk_esplora::esplora_client::{BlockingClient, Builder};
 use bdk_esplora::EsploraExt;
@@ -40,30 +39,27 @@ impl EsploraClientWrapper {
     #[wasm_bindgen]
     pub fn full_scan(
         &self,
-        request: FullScanRequest,
+        request: FullScanRequestWrapper,
         stop_gap: u64,
         parallel_requests: u64,
-    ) -> Result<UpdateWrapper, JsValue> {
-        let request = Arc::new(request);
-        let request: BdkFullScanRequest<KeychainKind> = request
-            .0
-            .lock()
-            .unwrap()
-            .take()
-            .ok_or(EsploraError::RequestAlreadyConsumed)
-            .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
+    ) -> Result<UpdateWrapper, String> {
+        let request: BdkFullScanRequest<KeychainKind> = request.get().into();
 
-        let result: BdkFullScanResult<KeychainKind> = self
+        let result = self
             .0
             .borrow()
             .0
-            .full_scan(request, stop_gap as usize, parallel_requests as usize)
-            .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
+            .full_scan(
+                request,
+                stop_gap as usize,
+                parallel_requests as usize
+            )
+            .map_err(|e| format!("{:?}", e))?;
 
         let update = BdkUpdate {
-            last_active_indices: result.last_active_indices,
-            tx_update: result.tx_update,
-            chain: result.chain_update,
+          last_active_indices: result.last_active_indices,
+          tx_update: result.tx_update,
+          chain: result.chain_update,
         };
 
         Ok(UpdateWrapper::new(Update(update)))

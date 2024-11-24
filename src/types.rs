@@ -168,14 +168,34 @@ pub struct FullScanRequestBuilder(
 pub struct SyncRequestBuilder(pub(crate) Mutex<Option<BdkSyncRequestBuilder<(KeychainKind, u32)>>>);
 
 #[wasm_bindgen]
-#[derive(Clone)]
 pub struct FullScanRequest(pub(crate) Arc<Mutex<Option<BdkFullScanRequest<KeychainKind>>>>);
 
 #[wasm_bindgen]
-impl FullScanRequest {
+pub struct FullScanRequestWrapper {
+    full_scan_request: Rc<RefCell<FullScanRequest>>
+}
+
+#[wasm_bindgen]
+impl FullScanRequestWrapper {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> Self {
-        Self(Arc::new(Mutex::new(Some(BdkFullScanRequest::default()))))
+    pub fn new(full_scan_request: FullScanRequest) -> Self {
+        FullScanRequestWrapper { full_scan_request: Rc::new(RefCell::new(full_scan_request)) }
+    }
+
+    pub fn get(&self) -> FullScanRequest {
+        self.full_scan_request.borrow().clone()
+    }
+}
+
+impl Clone for FullScanRequest {
+    fn clone(&self) -> Self {
+        FullScanRequest(self.0.clone())
+    }
+}
+
+impl From<FullScanRequest> for BdkFullScanRequest<KeychainKind> {
+    fn from(request: FullScanRequest) -> Self {
+        request.0.lock().unwrap().take().unwrap()
     }
 }
 
@@ -266,6 +286,11 @@ impl UpdateWrapper {
         self.update.borrow().clone()
     }
 }
+impl Clone for Update {
+    fn clone(&self) -> Self {
+        Update(self.0.clone())
+    }
+}
 
 // #[derive(Serialize, Clone)]
 // struct UpdateSerializable {
@@ -294,8 +319,6 @@ pub struct KeychainAndIndex {
     pub index: u32,
 }
 
-impl Clone for Update {
-    fn clone(&self) -> Self {
-        Update(self.0.clone())
-    }
-}
+
+
+
