@@ -110,10 +110,16 @@ impl Wallet {
     //     self.get_wallet().reveal_next_address(keychain).into()
     // }
 
-    // #[wasm_bindgen]
-    // pub fn peek_address(&self, keychain: KeychainKind, index: u32) -> AddressInfo {
-    //     self.get_wallet().peek_address(keychain, index).into()
-    // }
+    #[wasm_bindgen]
+    pub fn peek_address(&self, keychain_kind: String, index: u32) -> String {
+        let keychain = match keychain_kind.as_str() {
+            "external" => KeychainKind::External,
+            "internal" => KeychainKind::Internal,
+            _ => return "Invalid keychain kind".into(),
+        };
+
+        self.get_wallet().peek_address(keychain, index).to_string()
+    }
 
     // #[wasm_bindgen]
     // pub fn next_derivation_index(&self, keychain: KeychainKind) -> u32 {
@@ -175,11 +181,12 @@ impl Wallet {
     //     self.get_wallet().network()
     // }
 
-    // #[wasm_bindgen]
-    // pub fn balance(&self) -> Balance {
-    //     let bdk_balance = self.get_wallet().balance();
-    //     Balance::from(bdk_balance)
-    // }
+    #[wasm_bindgen]
+    pub fn balance(&self) -> u64 {
+        let bdk_balance = self.get_wallet().balance();
+        // Balance::from(bdk_balance)
+        bdk_balance.total().to_sat()
+    }
 
     // #[wasm_bindgen]
     // pub fn is_mine(&self, script: Arc<Script>) -> bool {

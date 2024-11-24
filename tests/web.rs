@@ -47,14 +47,17 @@ async fn test_wallet() {
     
     // wallet.sync(5).await.expect("sync");
 
-    // let first_address = wallet.peek_address(0);
-    // assert_eq!(
-    //     first_address,
-    //     "tb1pkar3gerekw8f9gef9vn9xz0qypytgacp9wa5saelpksdgct33qdqs257jl".to_string()
-    // );
+    let first_address = wallet.peek_address("external".into(), 0);
+    console::log_1(&format!("first_address: {}", first_address).into());
 
-    // let balance = wallet.balance();
-    // assert_ne!(balance, 0);
+    assert_eq!(
+        first_address,
+        "tb1pkar3gerekw8f9gef9vn9xz0qypytgacp9wa5saelpksdgct33qdqs257jl".to_string()
+    );
+
+    let balance = wallet.balance();
+    console::log_1(&format!("balance: {}", balance).into());
+    assert_ne!(balance, 0);
 
     // let new_address = wallet.get_new_address();
     // console::log_1(&format!("new_address: {}", new_address).into());
