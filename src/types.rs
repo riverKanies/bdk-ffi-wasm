@@ -167,7 +167,6 @@ pub struct FullScanRequestBuilder(
 
 pub struct SyncRequestBuilder(pub(crate) Mutex<Option<BdkSyncRequestBuilder<(KeychainKind, u32)>>>);
 
-#[wasm_bindgen]
 pub struct FullScanRequest(pub(crate) Arc<Mutex<Option<BdkFullScanRequest<KeychainKind>>>>);
 
 #[wasm_bindgen]
@@ -175,9 +174,7 @@ pub struct FullScanRequestWrapper {
     full_scan_request: Rc<RefCell<FullScanRequest>>
 }
 
-#[wasm_bindgen]
 impl FullScanRequestWrapper {
-    #[wasm_bindgen(constructor)]
     pub fn new(full_scan_request: FullScanRequest) -> Self {
         FullScanRequestWrapper { full_scan_request: Rc::new(RefCell::new(full_scan_request)) }
     }
