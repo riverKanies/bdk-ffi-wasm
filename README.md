@@ -1,5 +1,32 @@
+## Idea
 the idea for this repo is to make a bdk-wasm lib that mirrors the api of bdk-ffi
 
+## Notes:
+translating rust from [bdk-ffi](https://github.com/bitcoindevkit/bdk-ffi/tree/master/bdk-ffi) to a wasm api, steps:
+
+- copy struct and impl from bdk-ffi/bdk-ffi/src files
+- make wrapper struct for struct i.e. Wallet → WalletWrapper
+- add wallet attr to wrapper, use Rc<RefCell<Wallet>> pattern
+- add wasm_bindgen trait to wrapper and wrapper methods that get exposed to JS
+- this will raise errors for all methods that aren’t wasm compatible i.e. have string or number I/O
+- ensure wrapper constructor returns wrapper with Rc::new and RefCell::new on the inner struct
+- wrappers are wasm compatible and can be used as proxy objects in JS for underlying rust struct
+- wrapper methods must pull self inner out of wrappers and clone with Rc::clone
+- wrapper methods must also wrap return values that aren’t numbers or strings
+- wrappers that get passed in as values to methods for other wrappers must have a 'get' method to access and clone the inner value from another wrapper struct. If the inner struct doesn't have a Clone impl, you must make a 'newtype' struct to implement clone, and From impl to convert back to the og BdkType (see Types.rs>FullScanRequest)
+
+
+
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
+
+# OG Wasm Pack README:
 
 <div align="center">
 
