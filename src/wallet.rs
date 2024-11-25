@@ -10,7 +10,7 @@ use crate::error::{
 };
 use crate::types::{
     AddressInfo, Balance, CanonicalTx, FullScanRequest, FullScanRequestWrapper, KeychainAndIndex, LocalOutput,
-    SentAndReceivedValues, SyncRequestBuilder, Update, UpdateWrapper,
+    SentAndReceivedValues, SyncRequestBuilder, UpdateWrapper,
 };
 
 use bitcoin_ffi::{Amount, FeeRate, OutPoint, Script};
@@ -163,7 +163,7 @@ impl Wallet {
     pub fn apply_update_at(&self, update: UpdateWrapper, timestamp: u64) -> (Result<(), String>) {
         let update = update.get();
         Ok(self.get_wallet()
-            .apply_update_at(update.0.clone(), Some(timestamp))
+            .apply_update_at(update, Some(timestamp))
             .map_err(|e| format!("{:?}", e))?)
     }
 

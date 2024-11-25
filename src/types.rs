@@ -265,32 +265,22 @@ impl FullScanRequestBuilder {
     }
 }
 
-#[wasm_bindgen]
-// #[derive(Serialize, Clone)]
-// #[serde(into = "UpdateSerializable")]
-pub struct Update(pub(crate) BdkUpdate);
 
 #[wasm_bindgen]
 pub struct UpdateWrapper {
-    update: Rc<RefCell<Update>>
+    update: Rc<RefCell<BdkUpdate>>
 }
 
-#[wasm_bindgen]
 impl UpdateWrapper {
-    #[wasm_bindgen(constructor)]
-    pub fn new(update: Update) -> Self {
+    pub fn new(update: BdkUpdate) -> Self {
         UpdateWrapper { update: Rc::new(RefCell::new(update)) }
     }
 
-    pub fn get(&self) -> Update {
+    pub fn get(&self) -> BdkUpdate {
         self.update.borrow().clone()
     }
 }
-impl Clone for Update {
-    fn clone(&self) -> Self {
-        Update(self.0.clone())
-    }
-}
+
 
 // #[derive(Serialize, Clone)]
 // struct UpdateSerializable {

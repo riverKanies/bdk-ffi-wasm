@@ -4,7 +4,6 @@ use wasm_bindgen::prelude::*;
 
 use crate::bitcoin::Transaction;
 use crate::error::EsploraError;
-use crate::types::Update;
 use crate::types::{FullScanRequestWrapper, SyncRequest, UpdateWrapper};
 
 use bdk_esplora::esplora_client::{AsyncClient, Builder};
@@ -82,11 +81,11 @@ impl EsploraClientWrapper {
         .map_err(|e| format!("{:?}", e))?;
 
 
-      let update = Update(BdkUpdate {
+      let update = BdkUpdate {
         last_active_indices: result.last_active_indices,
         tx_update: result.tx_update,
         chain: result.chain_update,
-      });
+      };
     
             // Ok(UpdateWrapper::new(Update(update)))
 
